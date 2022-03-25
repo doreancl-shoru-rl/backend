@@ -1,34 +1,42 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { Model } from 'mongoose';
-import { Link } from './interfaces/link.interface';
+import { DeleteResult } from 'mongodb';
+import { Link, LinkDocument } from './schemas/link.schema';
 
 @Injectable()
 export class LinksService {
-  constructor(
-    @Inject('LINK_MODEL')
-    private catModel: Model<Link>,
-  ) {}
+  constructor(@Inject(Link.name) private LinkModel: Model<LinkDocument>) {}
 
-  create(createLinkDto: CreateLinkDto) {
-    const createdCat = new this.catModel(createLinkDto);
-    return createdCat.save();
+  async create(createLinkDto: CreateLinkDto) {
+    console.log(createLinkDto);
+    const createdCat = new this.LinkModel(createLinkDto);
+    return await createdCat.save();
   }
 
   async findOne(id): Promise<Link> {
-    return await this.catModel.findById(id).exec();
+    return await this.LinkModel.findById(id).exec();
   }
 
   async findAll(): Promise<Link[]> {
-    return this.catModel.find().exec();
+    return await this.LinkModel.find().exec();
   }
 
-  update(id: number, updateLinkDto: UpdateLinkDto) {
-    return `This action updates a #${id} link`;
+  async update(id: number, updateLinkDto: UpdateLinkDto) {
+    const link = await this.LinkModel.findByIdAndUpdate(id, updateLinkDto);
+    if (!link) {
+      throw new NotFoundException();
+    }
+    return link;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} link`;
+  async remove(id) {
+    console.log({ id });
+    const res: DeleteResult = await this.LinkModel.deleteOne({
+      _id: id,
+    }).exec();
+
+    return res.deletedCount > 0;
   }
 }

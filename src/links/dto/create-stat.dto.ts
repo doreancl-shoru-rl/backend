@@ -1,4 +1,4 @@
-export class CreateLinkDto {
+export class CreateStatDto {
   readonly id: string;
   readonly title: string;
   readonly link: string;

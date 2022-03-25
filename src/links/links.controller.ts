@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Response,
+} from '@nestjs/common';
 import { LinksService } from './links.service';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
@@ -8,18 +19,28 @@ export class LinksController {
   constructor(private readonly linksService: LinksService) {}
 
   @Post()
-  create(@Body() createLinkDto: CreateLinkDto) {
-    return this.linksService.create(createLinkDto);
+  async create(@Body() createLinkDto: CreateLinkDto) {
+    console.log(createLinkDto);
+    return await this.linksService.create(createLinkDto);
   }
 
   @Get()
-  findAll() {
-    return this.linksService.findAll();
+  async findAll() {
+    return await this.linksService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.linksService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.linksService.findOne(id);
+  }
+
+  @Get('/redirect/:id')
+  async redirect(@Param('id') id: string, @Response() res) {
+    const link = await this.linksService.findOne(id);
+    console.log(link);
+    link.long_url = 'https://www.linkedin.com/in/scoppia/';
+    res.redirect(HttpStatus.MOVED_PERMANENTLY, link.long_url);
+    return link;
   }
 
   @Patch(':id')
@@ -28,7 +49,13 @@ export class LinksController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.linksService.remove(+id);
+  async remove(@Param('id') id: string) {
+    console.log({ id });
+
+    const isRemoved = await this.linksService.remove(id);
+
+    if (isRemoved !== true) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
   }
 }
