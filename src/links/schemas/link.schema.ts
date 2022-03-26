@@ -1,18 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, ObjectId } from 'mongoose';
-import { Transform } from 'class-transformer';
+import { Document } from 'mongoose';
 
 export type LinkDocument = Link & Document;
 
 @Schema({ timestamps: true })
 export class Link {
-  @Transform(({ value }) => value.toString())
-  _id: ObjectId;
-
   @Prop()
   title: string;
 
-  @Prop({ unique: true })
+  @Prop()
   link: string;
 
   @Prop()

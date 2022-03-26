@@ -1,7 +1,6 @@
 import { Document, ObjectId } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Link, LinkSchema } from './link.schema';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export type StatDocument = Stat & Document;
 
@@ -10,8 +9,7 @@ export class Stat extends Document {
   @Transform(({ value }) => value.toString())
   _id: ObjectId;
 
-  @Prop({ type: LinkSchema })
-  @Type(() => Link)
+  @Prop()
   link: string;
 
   @Prop()

@@ -10,7 +10,6 @@ export class LinksService {
   constructor(@Inject(Link.name) private LinkModel: Model<LinkDocument>) {}
 
   async create(createLinkDto: CreateLinkDto) {
-    console.log(createLinkDto);
     const createdCat = new this.LinkModel(createLinkDto);
     return await createdCat.save();
   }
