@@ -1,9 +1,12 @@
 import {
   Body,
+  CACHE_MANAGER,
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
@@ -13,12 +16,15 @@ import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { LinksService } from './links.service';
 import { StatsService } from './stats.service';
+import { Cache } from 'cache-manager';
+import { Linka } from './schemas/link.schema';
 
 @Controller('links')
 export class LinksController {
   constructor(
     private readonly linksService: LinksService,
     private readonly statsService: StatsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Post()
@@ -39,10 +45,14 @@ export class LinksController {
 
   @Get('/redirect/:id')
   async redirect(@Param('id') id: string, @Response() res) {
-    const link = await this.linksService.findOne(id);
-    res.redirect(HttpStatus.MOVED_PERMANENTLY, link.long_url);
-    this.statsService.create({ link: link._id, time: new Date() });
-    return link;
+    let redirectLink: Linka = await this.cacheManager.get(id);
+    if (!redirectLink) {
+      redirectLink = await this.linksService.findOne(id);
+      await this.cacheManager.set(id, redirectLink, { ttl: 900 });
+    }
+    res.redirect(HttpStatus.MOVED_PERMANENTLY, redirectLink.long_url);
+    this.statsService.create({ link: redirectLink._id, time: new Date() });
+    return redirectLink;
   }
 
   @Patch(':id')
@@ -56,9 +66,11 @@ export class LinksController {
 
     const isRemoved = await this.linksService.remove(id);
 
-    //if (isRemoved !== true) {
-    // throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
-    //}
+    if (isRemoved !== true) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    await this.cacheManager.del(id);
 
     return;
   }

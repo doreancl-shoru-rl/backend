@@ -1,9 +1,8 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LinksModule } from './links/links.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { HolaModule } from './hola/hola.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -24,7 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
     LinksModule,
-    HolaModule,
+    CacheModule.register(),
   ],
   controllers: [AppController],
   providers: [AppService],
