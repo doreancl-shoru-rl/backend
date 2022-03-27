@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LinksModule } from './links/links.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { HolaModule } from './hola/hola.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       'REMOVED',
     ),
     LinksModule,
+    HolaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

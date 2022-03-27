@@ -1,24 +1,28 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
+import { Linka, LinkDocument } from './schemas/link.schema';
 import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult } from 'mongodb';
-import { Link, LinkDocument } from './schemas/link.schema';
 
 @Injectable()
 export class LinksService {
-  constructor(@Inject(Link.name) private LinkModel: Model<LinkDocument>) {}
+  //constructor(@Inject(Linka.name) private LinkaModel: Model<LinkDocument>) {}
+  constructor(
+    @InjectModel(Linka.name) private LinkModel: Model<LinkDocument>,
+  ) {}
 
-  async create(createLinkDto: CreateLinkDto) {
-    const createdCat = new this.LinkModel(createLinkDto);
+  async create(CreateLinkDto: CreateLinkDto) {
+    const createdCat = new this.LinkModel(CreateLinkDto);
     return await createdCat.save();
   }
 
-  async findOne(id): Promise<Link> {
+  async findOne(id): Promise<Linka> {
     return await this.LinkModel.findById(id).exec();
   }
 
-  async findAll(): Promise<Link[]> {
+  async findAll(): Promise<Linka[]> {
     return await this.LinkModel.find().exec();
   }
 

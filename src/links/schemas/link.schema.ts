@@ -1,14 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-
-export type LinkDocument = Link & Document;
+import { Transform } from 'class-transformer';
 
 @Schema({ timestamps: true })
-export class Link {
+export class Linka {
+  @Transform(({ value }) => value.toString())
+  _id: string;
+
   @Prop()
   title: string;
 
-  @Prop()
+  @Prop({ index: true })
   link: string;
 
   @Prop()
@@ -18,4 +20,5 @@ export class Link {
   is_active: boolean;
 }
 
-export const LinkSchema = SchemaFactory.createForClass(Link);
+export type LinkDocument = Linka & Document;
+export const LinkSchema = SchemaFactory.createForClass(Linka);

@@ -1,22 +1,20 @@
 import { Document, ObjectId } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Transform } from 'class-transformer';
-
-export type StatDocument = Stat & Document;
+import { Linka, LinkSchema } from './link.schema';
+import { Transform, Type } from 'class-transformer';
 
 @Schema({ timestamps: true })
-export class Stat extends Document {
+export class Stat {
   @Transform(({ value }) => value.toString())
   _id: ObjectId;
 
-  @Prop()
+  @Prop({ type: LinkSchema })
+  @Type(() => Linka)
   link: string;
 
-  @Prop()
-  long_url: string;
-
-  @Prop()
-  is_active: boolean;
+  @Prop({ type: Date, required: true })
+  time: Date;
 }
 
+export type StatDocument = Stat & Document;
 export const StatSchema = SchemaFactory.createForClass(Stat);

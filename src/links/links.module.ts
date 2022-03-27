@@ -2,13 +2,18 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LinksController } from './links.controller';
 import { LinksService } from './links.service';
-import { Link, LinkSchema } from './schemas/link.schema';
+import { Linka, LinkSchema } from './schemas/link.schema';
+import { Stat, StatSchema } from './schemas/stat.schema';
+import { StatsService } from './stats.service';
+import { StatsController } from './stats.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Link.name, schema: LinkSchema }]),
+    MongooseModule.forFeature([{ name: Linka.name, schema: LinkSchema }]),
+    MongooseModule.forFeature([{ name: Stat.name, schema: StatSchema }]),
   ],
-  controllers: [LinksController],
-  providers: [LinksService],
+  controllers: [LinksController, StatsController],
+  providers: [LinksService, StatsService],
 })
-export class LinksModule {}
+export class LinksModule {
+}
