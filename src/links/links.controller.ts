@@ -40,7 +40,6 @@ export class LinksController {
   @Get('/redirect/:id')
   async redirect(@Param('id') id: string, @Response() res) {
     const link = await this.linksService.findOne(id);
-    link.long_url = 'https://www.linkedin.com/in/scoppia/';
     res.redirect(HttpStatus.MOVED_PERMANENTLY, link.long_url);
     this.statsService.create({ link: link._id, time: new Date() });
     return link;
