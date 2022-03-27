@@ -11,4 +11,4 @@ RUN npm install
 # Build
 #RUN npm run build
 
-#ENTRYPOINT [ "npm", "run", "dev" ]
+ENTRYPOINT [ "npm", "run", "dev" ]
