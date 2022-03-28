@@ -18,8 +18,8 @@ export class LinksService {
     return await createdCat.save();
   }
 
-  async findOne(id): Promise<Linka> {
-    return await this.LinkModel.findById(id).exec();
+  async findOne(link): Promise<Linka> {
+    return await this.LinkModel.findOne({ link: link }).exec();
   }
 
   async findAll(): Promise<Linka[]> {
