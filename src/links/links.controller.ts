@@ -18,7 +18,7 @@ import { UpdateLinkDto } from './dto/update-link.dto';
 import { LinksService } from './links.service';
 import { StatsService } from './stats.service';
 import { Cache } from 'cache-manager';
-import { Linka } from './schemas/link.schema';
+import { Link } from './schemas/link.schema';
 
 @Controller('links')
 export class LinksController {
@@ -30,7 +30,6 @@ export class LinksController {
 
   @Post()
   async create(@Body() createLinkDto: CreateLinkDto) {
-    console.log(createLinkDto);
     return await this.linksService.create(createLinkDto);
   }
 
@@ -41,14 +40,18 @@ export class LinksController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.linksService.findOne(id);
+    const link = await this.linksService.findOne(id);
+    if (!link) {
+      throw new NotFoundException();
+    }
+    return link;
   }
 
   @Get('/redirect/:link')
   async redirect(@Param('link') link: string, @Response() res) {
-    let redirectLink: Linka = await this.cacheManager.get(link);
+    let redirectLink: Link = await this.cacheManager.get(link);
     if (!redirectLink) {
-      redirectLink = await this.linksService.findOne(link);
+      redirectLink = await this.linksService.findOneBy({ link: link });
 
       if (!redirectLink) {
         throw new NotFoundException();
@@ -67,8 +70,6 @@ export class LinksController {
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    console.log({ id });
-
     const isRemoved = await this.linksService.remove(id);
 
     if (isRemoved !== true) {

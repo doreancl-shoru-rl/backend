@@ -3,14 +3,14 @@ import { Document } from 'mongoose';
 import { Transform } from 'class-transformer';
 
 @Schema({ timestamps: true })
-export class Linka {
+export class Link {
   @Transform(({ value }) => value.toString())
   _id: string;
 
   @Prop()
   title: string;
 
-  @Prop({ index: true })
+  @Prop({ index: true, unique: true })
   link: string;
 
   @Prop()
@@ -20,5 +20,5 @@ export class Linka {
   is_active: boolean;
 }
 
-export type LinkDocument = Linka & Document;
-export const LinkSchema = SchemaFactory.createForClass(Linka);
+export type LinkDocument = Link & Document;
+export const LinkSchema = SchemaFactory.createForClass(Link);
