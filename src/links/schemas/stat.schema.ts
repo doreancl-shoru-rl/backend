@@ -14,8 +14,8 @@ export class Stat {
   count?: number;
 
   //@Prop({ type: Number, required: true, unique: true })
-  @Prop({ type: Number, required: true })
-  time: number;
+  @Prop({ type: String, required: true })
+  time: string;
 }
 
 export type StatDocument = Stat & Document;

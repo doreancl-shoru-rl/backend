@@ -46,13 +46,10 @@ export class StatsService {
 
   async addStat(id: string) {
     const now = new Date();
-    const reportDate = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    ).getTime();
+    const reportDate =
+      now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate();
 
-    const stat = await this.statModel.findOneAndUpdate(
+    await this.statModel.findOneAndUpdate(
       { link: id, time: reportDate },
       {
         link: id,
