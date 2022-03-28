@@ -1,19 +1,21 @@
 import { Document, ObjectId } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Linka, LinkSchema } from './link.schema';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
-@Schema({ timestamps: true })
+@Schema({ strict: false })
 export class Stat {
   @Transform(({ value }) => value.toString())
   _id: ObjectId;
 
-  @Prop({ type: LinkSchema })
-  @Type(() => Linka)
+  @Prop({ unique: true })
   link: string;
 
-  @Prop({ type: Date, required: true })
-  time: Date;
+  @Prop({ type: Number, required: true, default: 0 })
+  count?: number;
+
+  //@Prop({ type: Number, required: true, unique: true })
+  @Prop({ type: Number, required: true })
+  time: number;
 }
 
 export type StatDocument = Stat & Document;

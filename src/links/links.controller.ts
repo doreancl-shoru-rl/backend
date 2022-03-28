@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -43,15 +44,19 @@ export class LinksController {
     return await this.linksService.findOne(id);
   }
 
-  @Get('/redirect/:id')
-  async redirect(@Param('id') id: string, @Response() res) {
-    let redirectLink: Linka = await this.cacheManager.get(id);
+  @Get('/redirect/:link')
+  async redirect(@Param('link') link: string, @Response() res) {
+    let redirectLink: Linka = await this.cacheManager.get(link);
     if (!redirectLink) {
-      redirectLink = await this.linksService.findOne(id);
-      await this.cacheManager.set(id, redirectLink, { ttl: 900 });
+      redirectLink = await this.linksService.findOne(link);
+
+      if (!redirectLink) {
+        throw new NotFoundException();
+      }
+      await this.cacheManager.set(link, redirectLink, { ttl: 900 });
     }
     res.redirect(HttpStatus.MOVED_PERMANENTLY, redirectLink.long_url);
-    this.statsService.create({ link: redirectLink._id, time: new Date() });
+    this.statsService.addStat(redirectLink._id);
     return redirectLink;
   }
 
