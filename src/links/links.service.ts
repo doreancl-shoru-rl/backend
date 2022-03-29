@@ -27,8 +27,10 @@ export class LinksService {
     return await this.LinkModel.find().exec();
   }
 
-  async update(id: number, updateLinkDto: UpdateLinkDto) {
-    const link = await this.LinkModel.findByIdAndUpdate(id, updateLinkDto);
+  async update(id, updateLinkDto: UpdateLinkDto) {
+    const link = await this.LinkModel.findByIdAndUpdate(id, updateLinkDto, {
+      new: true,
+    });
     if (!link) {
       throw new NotFoundException();
     }

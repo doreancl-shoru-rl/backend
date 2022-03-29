@@ -25,16 +25,19 @@ export class StatsService {
     const reportDate =
       now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate();
 
-    await this.statModel.findOneAndUpdate(
-      { link: id, time: reportDate },
-      {
-        link: id,
-        time: reportDate,
-        //count: 8,
-        $inc: { count: 1 },
-      },
-      { upsert: true, new: true, useFindAndModify: false },
-    );
+    try {
+      await this.statModel.findOneAndUpdate(
+        { link: id, time: reportDate },
+        {
+          link: id,
+          time: reportDate,
+          $inc: { count: 1 },
+        },
+        { upsert: true, new: true, useFindAndModify: false },
+      );
+    } catch (e) {
+      console.log(e);
+    }
     return;
   }
 }

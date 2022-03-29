@@ -11,6 +11,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Response,
 } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
@@ -64,8 +65,13 @@ export class LinksController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
+  patch(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
     return this.linksService.update(+id, updateLinkDto);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
+    return this.linksService.update(id, updateLinkDto);
   }
 
   @Delete(':id')
