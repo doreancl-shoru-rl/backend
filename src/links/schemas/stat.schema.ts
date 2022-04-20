@@ -7,7 +7,7 @@ export class Stat {
   @Transform(({ value }) => value.toString())
   _id: ObjectId;
 
-  @Prop({ unique: true })
+  @Prop({ type: String, required: true })
   link: string;
 
   @Prop({ type: Number, required: true, default: 0 })
@@ -20,3 +20,5 @@ export class Stat {
 
 export type StatDocument = Stat & Document;
 export const StatSchema = SchemaFactory.createForClass(Stat);
+
+StatSchema.index({ firstName: 1, lastName: 1 });
