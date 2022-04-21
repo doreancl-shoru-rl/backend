@@ -28,7 +28,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^9.0.3",
     "@nestjs/platform-express": "^8.4.3",
-    "cache-manager": "^3.6.0",
+    "cache-manager": "^3.6.1",
     "class-transformer": "^0.5.1",
     "mongoose": "^6.2.8",
     "reflect-metadata": "^0.1.13",
