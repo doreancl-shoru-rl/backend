@@ -1,9 +1,16 @@
-import { CacheModule, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { LinksModule } from './links/links.module';
+import { CacheModule, Logger, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { LinksModule } from './links/links.module';
+import { UsersModule } from './users/users.module';
+import { SheetModule } from './google/sheet/sheet.module';
+import { SheetsService } from './google/sheet/sheets.service';
+import { GmailModule } from './google/gmail/gmail.module';
+import { GmailService } from './google/gmail/gmail.service';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -23,9 +30,31 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
     LinksModule,
+    AuthModule,
     CacheModule.register(),
+    UsersModule,
+    SheetModule,
+    GmailModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: process.env.NODE_ENV !== 'production' ? 'info' : 'info',
+        customProps: (req, res) => ({
+          context: 'HTTP',
+        }),
+        transport:
+          process.env.NODE_ENV !== 'production'
+            ? {
+                target: 'pino-pretty',
+                options: {
+                  singleLine: true,
+                  translateTime: true,
+                },
+              }
+            : undefined,
+      },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SheetsService, GmailService, Logger],
 })
 export class AppModule {}
