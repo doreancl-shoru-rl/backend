@@ -1,15 +1,15 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Strategy } from 'passport-google-oauth20';
 import { config } from 'dotenv';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Profile } from './interfaces/types';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../../users/users.service';
 
 config();
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy) {
+export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly usersService: UsersService) {
     super({
       clientID: process.env.GOOGLE_ID,
@@ -29,23 +29,23 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
   async validate(
     accessToken: string,
-    refreshToken: string,
+    _refreshToken: string,
     profile: Profile,
-    done: VerifyCallback,
-  ): Promise<any> {
+    done,
+  ) {
     try {
       const { id } = profile;
       const user = await this.usersService.findOrCreate(
         id,
         'google',
         accessToken,
-        refreshToken,
+        _refreshToken,
         profile,
       );
-
       done(null, user);
     } catch (e) {
       console.log(54, e);
+      throw new UnauthorizedException();
     }
   }
 }

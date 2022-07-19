@@ -4,7 +4,7 @@ import { User, UserDocument } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult } from 'mongodb';
-import { Profile } from '../auth/interfaces/types';
+import { Profile } from '../auth/google/interfaces/types';
 
 @Injectable()
 export class UsersService {

@@ -8,10 +8,10 @@ import { UsersService } from './users/users.service';
 @Injectable()
 export class AppService {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly sheetsService: SheetsService,
-    private readonly gmailService: GmailService,
     private readonly logger: Logger,
+    private readonly usersService: UsersService,
+    private readonly gmailService: GmailService,
+    private readonly sheetsService: SheetsService,
   ) {}
 
   getHello(): string {
